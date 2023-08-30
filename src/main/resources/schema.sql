@@ -42,10 +42,11 @@ CREATE TABLE dish
 CREATE TABLE vote
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
-    user_id       INT       NOT NULL,
-    restaurant_id INT       NOT NULL,
-    date_time     TIMESTAMP NOT NULL,
+    user_id       INT                     NOT NULL,
+    restaurant_id INT                     NOT NULL,
+    date_time     TIMESTAMP DEFAULT now() NOT NULL,
     vote_date     DATE AS CAST(date_time AS DATE),
+    vote_time     TIME AS CAST(date_time AS TIME),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE
 );
