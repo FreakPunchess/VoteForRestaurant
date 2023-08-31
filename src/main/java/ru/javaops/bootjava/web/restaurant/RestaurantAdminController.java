@@ -1,4 +1,4 @@
-package ru.javaops.bootjava.web;
+package ru.javaops.bootjava.web.restaurant;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

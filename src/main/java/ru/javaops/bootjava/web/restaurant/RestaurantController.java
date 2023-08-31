@@ -1,4 +1,4 @@
-package ru.javaops.bootjava.web;
+package ru.javaops.bootjava.web.restaurant;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,8 @@
-package ru.javaops.bootjava.web;
+package ru.javaops.bootjava.web.dish;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,22 +23,15 @@ import static ru.javaops.bootjava.util.validation.ValidationUtil.checkNew;
 @RequestMapping(value = DishAdminController.DISH_ADMIN_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class DishAdminController {
 
-    static final String DISH_ADMIN_URL = "/api/admin/dish";
+    static final String DISH_ADMIN_URL = "/api/admin/restaurant/{restaurantId}/dish";
 
     protected final Logger log = getLogger(getClass());
 
     @Autowired
     protected DishRepository repository;
 
-    @GetMapping
-    public List<Dish> getAll() {
-        log.info("getAll");
-//        return repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
-        return repository.getAllWithRestaurant(Sort.by(Sort.Direction.ASC, "name"));
-    }
-
-    @GetMapping("/by-restaurant")
-    public List<Dish> getByRestaurant(@RequestParam int restaurantId) {
+    @GetMapping()
+    public List<Dish> getByRestaurant(@PathVariable int restaurantId) {
         log.info("getByRestaurant {}", restaurantId);
         return repository.getByRestaurantIdAAndDishDate(restaurantId, LocalDate.now());
     }

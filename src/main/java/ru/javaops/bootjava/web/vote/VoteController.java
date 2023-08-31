@@ -1,4 +1,4 @@
-package ru.javaops.bootjava.web;
+package ru.javaops.bootjava.web.vote;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.error.DataConflictException;
 import ru.javaops.bootjava.model.Vote;
 import ru.javaops.bootjava.repository.VoteRepository;
+import ru.javaops.bootjava.web.AuthUser;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -36,12 +37,11 @@ public class VoteController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> createWithLocation(@Valid @RequestBody Vote vote,
-                                                   @AuthenticationPrincipal AuthUser authUser) {
+    public ResponseEntity<Vote> createOrUpdate(@Valid @RequestBody Vote vote,
+                                               @AuthenticationPrincipal AuthUser authUser) {
         log.info("create {}", vote);
-//        checkNew(restaurant);
         Vote newOrUpdated = repository.getByUserIdAndVoteDate(authUser.id(), LocalDate.now());
-        if(newOrUpdated.getVoteTime().isAfter(LocalTime.of(11, 0))) {
+        if (newOrUpdated.getVoteTime().isAfter(LocalTime.of(11, 0))) {
             throw new DataConflictException("Updating your vote after 11 AM is forbidden...");
         } else if (newOrUpdated.getVoteTime().isBefore(LocalTime.of(11, 0))) {
             return ResponseEntity.ok(repository.save(vote));
