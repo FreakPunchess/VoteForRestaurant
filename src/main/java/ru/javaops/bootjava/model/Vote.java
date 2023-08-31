@@ -19,6 +19,7 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class Vote extends BaseEntity {
 
     @NotNull
@@ -35,4 +36,13 @@ public class Vote extends BaseEntity {
     @Column(insertable = false, updatable = false)
     private LocalTime voteTime = dateTime.toLocalTime();
 
+    public Vote(int userId, int restaurantId) {
+        this.userId = userId;
+        this.restaurantId = restaurantId;
+    }
+
+    public void setRestaurantId(int restaurantId) {
+        setDateTime(LocalDateTime.now());
+        this.restaurantId = restaurantId;
+    }
 }
