@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaops.bootjava.web.restaurant.RestaurantController.REST_URL;
 import static ru.javaops.bootjava.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.bootjava.web.user.UserTestData.ADMIN_MAIL;
-import static ru.javaops.bootjava.web.user.UserTestData.NOT_FOUND;
 import static ru.javaops.bootjava.web.user.UserTestData.USER_MAIL;
 
 class RestaurantControllerTest extends AbstractControllerTest {
