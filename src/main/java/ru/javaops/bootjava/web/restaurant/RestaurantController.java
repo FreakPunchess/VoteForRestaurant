@@ -2,6 +2,7 @@ package ru.javaops.bootjava.web.restaurant;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ public class RestaurantController {
         return repository.getExisted(id);
     }
 
+    @Cacheable("restaurants")
     @GetMapping
     public List<Restaurant> getAll() {
         log.info("getAll");
