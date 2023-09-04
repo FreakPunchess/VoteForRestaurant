@@ -16,7 +16,6 @@ import ru.javaops.bootjava.web.AuthUser;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -33,37 +32,36 @@ public class VoteController {
     protected VoteRepository repository;
 
     @GetMapping()
-    public Vote get(@AuthenticationPrincipal AuthUser authUser) {
+    public VoteTo get(@AuthenticationPrincipal AuthUser authUser) {
         log.info("get today's user vote");
-        return repository.getByUserIdAndVoteDate(authUser.id(), LocalDate.now());
-    }
-
-    @GetMapping("/{restaurantId}")
-    public int getVoteCount(@PathVariable int restaurantId) {
-        log.info("get vote count restaurant with id = {}", restaurantId);
-        return repository.getVotesCount(restaurantId);
+        return makeTo(repository.getByUserIdAndVoteDate(authUser.id(), LocalDate.now()));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> createOrUpdate(@RequestBody @Valid VoteTo voteTo,
-                                               @AuthenticationPrincipal AuthUser authUser) {
+    public ResponseEntity<VoteTo> createOrUpdate(@RequestBody @Valid VoteTo voteTo,
+                                                 @AuthenticationPrincipal AuthUser authUser) {
         log.info("create vote for restaurant with id {}", voteTo.getRestaurantId());
-        Vote newOrUpdated = get(authUser);
+        Vote newOrUpdated = repository.getByUserIdAndVoteDate(authUser.id(), LocalDate.now());
         if (newOrUpdated.getVoteTime().isAfter(LocalTime.of(11, 0))) {
             throw new DataConflictException("Updating your vote after 11 AM is forbidden...");
         } else if (newOrUpdated.getVoteTime().isBefore(LocalTime.of(11, 0))) {
             newOrUpdated.setRestaurantId(voteTo.getRestaurantId());
-            return ResponseEntity.ok(repository.save(newOrUpdated));
+            return ResponseEntity.ok(makeTo(repository.save(newOrUpdated)));
         }
 
         newOrUpdated = repository.save(fromTo(authUser.id(), voteTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(newOrUpdated.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(newOrUpdated);
+        return ResponseEntity.created(uriOfNewResource).body(makeTo(newOrUpdated));
     }
+
 
     private Vote fromTo(int userId, VoteTo voteTo) {
         return new Vote(userId, voteTo.getRestaurantId());
+    }
+
+    private VoteTo makeTo(Vote vote) {
+        return new VoteTo(vote.getRestaurantId());
     }
 }
