@@ -13,9 +13,8 @@ public class VoteUtil {
         return new VoteTo(vote.getRestaurantId(), vote.getDateTime());
     }
 
-    public static Vote updateFromTo (Vote vote, VoteTo voteTo) {
+    public static void updateFromTo(Vote vote, VoteTo voteTo) {
         vote.setRestaurantId(voteTo.getRestaurantId());
         vote.setDateTime(voteTo.getDateTime());
-        return null;
     }
 }
