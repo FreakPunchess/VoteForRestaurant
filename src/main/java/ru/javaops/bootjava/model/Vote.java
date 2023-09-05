@@ -30,19 +30,23 @@ public class Vote extends BaseEntity {
     private int restaurantId;
     @NotNull
     @Column(name = "date_time")
-    private LocalDateTime dateTime = LocalDateTime.now();
+    private LocalDateTime dateTime;
     @Column(insertable = false, updatable = false)
-    private LocalDate voteDate = dateTime.toLocalDate();
+    private LocalDate voteDate;
     @Column(insertable = false, updatable = false)
-    private LocalTime voteTime = dateTime.toLocalTime();
+    private LocalTime voteTime;
 
-    public Vote(int userId, int restaurantId) {
+    public Vote(int userId, int restaurantId, LocalDateTime dateTime) {
         this.userId = userId;
         this.restaurantId = restaurantId;
+        this.dateTime = dateTime;
+        this.voteDate = dateTime.toLocalDate();
+        this.voteTime = dateTime.toLocalTime();
     }
 
-    public void setRestaurantId(int restaurantId) {
-        setDateTime(LocalDateTime.now());
-        this.restaurantId = restaurantId;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+        voteDate = dateTime.toLocalDate();
+        voteTime = dateTime.toLocalTime();
     }
 }

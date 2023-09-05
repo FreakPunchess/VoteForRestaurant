@@ -17,8 +17,10 @@ import ru.javaops.bootjava.web.AuthUser;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import static ru.javaops.bootjava.util.VoteUtil.*;
 
 @RestController
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,30 +40,27 @@ public class VoteController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VoteTo> createOrUpdate(@RequestBody @Valid VoteTo voteTo,
-                                                 @AuthenticationPrincipal AuthUser authUser) {
+    public ResponseEntity<VoteTo> create(@RequestBody @Valid VoteTo voteTo,
+                                         @AuthenticationPrincipal AuthUser authUser) {
         log.info("create vote for restaurant with id {}", voteTo.getRestaurantId());
-        Vote newOrUpdated = repository.getByUserIdAndVoteDate(authUser.id(), LocalDate.now());
-        if (newOrUpdated.getVoteTime().isAfter(LocalTime.of(11, 0))) {
-            throw new DataConflictException("Updating your vote after 11 AM is forbidden...");
-        } else if (newOrUpdated.getVoteTime().isBefore(LocalTime.of(11, 0))) {
-            newOrUpdated.setRestaurantId(voteTo.getRestaurantId());
-            return ResponseEntity.ok(makeTo(repository.save(newOrUpdated)));
+        Vote newVote = repository.getByUserIdAndVoteDate(authUser.id(), LocalDate.now());
+        if (newVote != null) {
+            updateFromTo(newVote, voteTo);
+            return update(newVote);
         }
 
-        newOrUpdated = repository.save(fromTo(authUser.id(), voteTo));
+        newVote = repository.save(fromTo(authUser.id(), voteTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(newOrUpdated.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(makeTo(newOrUpdated));
+                .buildAndExpand(newVote.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(makeTo(newVote));
     }
 
-
-    private Vote fromTo(int userId, VoteTo voteTo) {
-        return new Vote(userId, voteTo.getRestaurantId());
-    }
-
-    private VoteTo makeTo(Vote vote) {
-        return new VoteTo(vote.getRestaurantId());
+    private ResponseEntity<VoteTo> update(Vote forUpdate) {
+        if (forUpdate.getVoteTime().isAfter(LocalTime.of(11, 0, 0, 0))) {
+            throw new DataConflictException("Updating your vote after 11 AM is forbidden...");
+        } else {
+            return ResponseEntity.ok(makeTo(repository.save(forUpdate)));
+        }
     }
 }

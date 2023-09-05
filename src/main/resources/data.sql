@@ -23,5 +23,4 @@ VALUES ('Борщ', 15000, 1),
 INSERT INTO VOTE (restaurant_id, date_time, user_id)
 VALUES (1, '2023-04-18 10:00:00', 2),
        (2, '2023-04-18 11:02:00', 1),
-       (2, now(), 1),
        (1, now(), 2);
