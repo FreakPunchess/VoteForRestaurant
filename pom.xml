@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.javaops</groupId>
-    <artifactId>bootjava</artifactId>
+    <artifactId>VoteForRestaurant</artifactId>
     <version>1.0</version>
-    <name>BootJava</name>
+    <name>Vote for restaurant</name>
     <description>Daily voting for restaurant application</description>
 
     <properties>
